@@ -4,18 +4,18 @@ var models = require("../models");
 
 router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
-  models.materias
+  models.materia
     .findAll({
-      attributes: ["id_carrera", "nombre"]
+      attributes: ["id", "nombre", "id_carrera"]
     })
-    .then(materia => res.send(materia))
+    .then(materias => res.send(materias))
     .catch(() => res.sendStatus(500));
 });
 
 router.post("/", (req, res) => {
-  models.materias
-    .create({ nombre: req.body.nombre, id_carrera : req.body.id_carrera })
-    .then(materia => res.status(201).send({ id: materia.id }))
+  models.materia
+    .create({ nombre: req.body.nombre, id_carrera: req.body.id_carrera  })
+    .then(materias => res.status(201).send({ id: materias.id }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
         res.status(400).send('Bad request: existe otra carrera con el mismo nombre')
@@ -28,27 +28,27 @@ router.post("/", (req, res) => {
 });
 
 const findMateria = (id, { onSuccess, onNotFound, onError }) => {
-  models.materias
+  models.materia
     .findOne({
-      attributes: ["id", "nombre"],
+      attributes: ["id", "nombre", "id_carrera"],
       where: { id }
     })
-    .then(materia => (materia ? onSuccess(materia) : onNotFound()))
+    .then(materias => (materias ? onSuccess(materias) : onNotFound()))
     .catch(() => onError());
 };
 
 router.get("/:id", (req, res) => {
   findMateria(req.params.id, {
-    onSuccess: materia => res.send(materia),
+    onSuccess: materias => res.send(materias),
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
   });
 });
 
 router.put("/:id", (req, res) => {
-  const onSuccess = materia =>
-    materia
-      .update({ nombre: req.body.nombre }, { fields: ["nombre"] })
+  const onSuccess = carrera =>
+    carrera
+      .update({ nombre: req.body.nombre, id_carrera: req.body.id_carrera }, { fields: ["nombre", "id_carrera"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {
@@ -67,12 +67,12 @@ router.put("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  const onSuccess = materia =>
-    materia
+  const onSuccess = materias =>
+    materias
       .destroy()
       .then(() => res.sendStatus(200))
       .catch(() => res.sendStatus(500));
-  findCarrera(req.params.id, {
+    findMateria(req.params.id, {
     onSuccess,
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
