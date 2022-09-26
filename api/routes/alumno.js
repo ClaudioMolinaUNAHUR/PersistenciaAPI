@@ -4,29 +4,31 @@ var models = require("../models");
 
 router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
-  models.materia
+  models.alumno
     .findAll({
-      attributes: ["id", "nombre", "id_carrera"],
+      attributes: ["id", "nombre", "apellido", "dni", "id_carrera", "id_materia"],
 
       /////////se agrega la asociacion 
       include:[{as:'Carrera-Relacionada',
                 model:models.carrera,
-                attributes: ["id","nombre"]}]
+                attributes: ["id","nombre"]},
+                {as:'Materia-Relacionada',
+                model:models.materia,
+                attributes: ["id","nombre", "id_carrera"]}]
       ////////////////////////////////
-      
 
     })
-    .then(materias => res.send(materias))
+    .then(alumnos => res.send(alumnos))
     .catch(() => res.sendStatus(500));
 });
 
 router.post("/", (req, res) => {
-  models.materia
-    .create({ nombre: req.body.nombre, id_carrera: req.body.id_carrera  })
-    .then(materias => res.status(201).send({ id: materias.id }))
+  models.alumno
+    .create({ nombre: req.body.nombre, apellido: req.body.apellido, dni: req.body.dni, id_carrera: req.body.id_carrera, id_materia: req.body.id_materia })
+    .then(alumno => res.status(201).send({ id: alumno.id }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
-        res.status(400).send('Bad request: existe otra carrera con el mismo nombre')
+        res.status(400).send('Bad request: existe otra alumno con el mismo nombre')
       }
       else {
         console.log(`Error al intentar insertar en la base de datos: ${error}`)
@@ -35,39 +37,39 @@ router.post("/", (req, res) => {
     });
 });
 
-const findMateria = (id, { onSuccess, onNotFound, onError }) => {
-  models.materia
+const findalumno = (id, { onSuccess, onNotFound, onError }) => {
+  models.alumno
     .findOne({
-      attributes: ["id", "nombre", "id_carrera"],
+      attributes: ["id", "nombre","apellido", "dni", "id_carrera", "id_materia"],
       where: { id }
     })
-    .then(materias => (materias ? onSuccess(materias) : onNotFound()))
+    .then(alumno => (alumno ? onSuccess(alumno) : onNotFound()))
     .catch(() => onError());
 };
 
 router.get("/:id", (req, res) => {
-  findMateria(req.params.id, {
-    onSuccess: materias => res.send(materias),
+  findalumno(req.params.id, {
+    onSuccess: alumno => res.send(alumno),
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
   });
 });
 
 router.put("/:id", (req, res) => {
-  const onSuccess = carrera =>
-    carrera
-      .update({ nombre: req.body.nombre, id_carrera: req.body.id_carrera }, { fields: ["nombre", "id_carrera"] })
+  const onSuccess = alumno =>
+    alumno
+      .update({ nombre: req.body.nombre, apellido: req.body.apellido, dni: req.body.dni, id_carrera: req.body.id_carrera, id_materia: req.body.id_materia }, { fields: ["nombre","apellido","dni","id_carrera","id_materia"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {
-          res.status(400).send('Bad request: existe otra carrera con el mismo nombre')
+          res.status(400).send('Bad request: existe otra alumno con el mismo nombre')
         }
         else {
           console.log(`Error al intentar actualizar la base de datos: ${error}`)
           res.sendStatus(500)
         }
       });
-    findMateria(req.params.id, {
+    findalumno(req.params.id, {
     onSuccess,
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
@@ -75,12 +77,12 @@ router.put("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  const onSuccess = materias =>
-    materias
+  const onSuccess = alumno =>
+    alumno
       .destroy()
       .then(() => res.sendStatus(200))
       .catch(() => res.sendStatus(500));
-    findMateria(req.params.id, {
+  findalumno(req.params.id, {
     onSuccess,
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
