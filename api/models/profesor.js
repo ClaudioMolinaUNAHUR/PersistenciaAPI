@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      self.belongsTo(models.materia// modelo al que pertenece
+      profesor.belongsTo(models.materia// modelo al que pertenece
       ,{
         as : 'Materia-Relacionada',  // nombre de mi relacion
         foreignKey: 'id_materia'     // campo con el que voy a igualar
