@@ -11,7 +11,10 @@ router.get("/", (req, res) => {
     /////////se agrega la asociacion 
     include:[{as:'Materia-Relacionada',
             model:models.materia,
-            attributes: ["id","nombre","id_carrera"]}]
+            attributes: ["id","nombre","id_carrera"]}],
+            order: [["id", "ASC"]],
+            offset: (paginaActual-1) * cantidadAVisualizar, 
+            limit: cantidadAVisualizar
     ////////////////////////////////
     })
     .then(profesores => res.send(profesores))

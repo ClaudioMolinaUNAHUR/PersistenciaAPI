@@ -4,6 +4,8 @@ var models = require("../models");
 
 router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
+  const cantidadAVisualizar = parseInt(req.query.cantidadAVisualizar);
+  const paginaActual = parseInt(req.query.paginaActual);
   models.materia
     .findAll({
       attributes: ["id", "nombre", "id_carrera"],
@@ -11,7 +13,12 @@ router.get("/", (req, res) => {
       /////////se agrega la asociacion 
       include:[{as:'Carrera-Relacionada',
                 model:models.carrera,
-                attributes: ["id","nombre"]}]
+                attributes: ["id","nombre"]}],
+
+                order: [["id", "ASC"]],
+                offset: (paginaActual-1) * cantidadAVisualizar, 
+                limit: cantidadAVisualizar
+      
       ////////////////////////////////
       
 
