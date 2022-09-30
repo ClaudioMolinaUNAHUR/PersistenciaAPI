@@ -4,6 +4,9 @@ var models = require("../models");
 
 router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
+  const cantidadAVisualizar = parseInt(req.query.cantidadAVisualizar);
+  const paginaActual = parseInt(req.query.paginaActual);
+
   models.profesor
     .findAll({
       attributes: ["id", "nombre","apellido","id_materia"],
