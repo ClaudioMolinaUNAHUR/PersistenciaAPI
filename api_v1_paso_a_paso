@@ -17,5 +17,10 @@
      npx sequelize-cli model:generate --name carrera --attributes nombre:string
      npx sequelize db:migrate
 
-     npx sequelize-cli model:generate --name materias --attributes nombre:string,id_carrera:integer
+     npx sequelize-cli model:generate --name materia --attributes nombre:string,id_carrera:integer
      set DEBUG=api:* | npm start
+
+     npx sequelize-cli model:generate --name alumno --attributes nombre:string,apellido:string,dni:integer,id_carrera:integer,id_materia:integer
+     npx sequelize-cli model:generate --name profesor --attributes nombre:string,apellido:string,dni:integer,id_materia:integer
+     npx sequelize-cli model:generate --name aulas --attributes id_materia:integer
+

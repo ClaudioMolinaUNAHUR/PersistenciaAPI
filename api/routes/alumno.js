@@ -24,7 +24,11 @@ router.get("/", (req, res) => {
 
 router.post("/", (req, res) => {
   models.alumno
-    .create({ nombre: req.body.nombre, apellido: req.body.apellido, dni: req.body.dni, id_carrera: req.body.id_carrera, id_materia: req.body.id_materia })
+    .create({ nombre: req.body.nombre,
+              apellido: req.body.apellido,
+              dni: req.body.dni,
+              id_carrera: req.body.id_carrera,
+              id_materia: req.body.id_materia })
     .then(alumno => res.status(201).send({ id: alumno.id }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
@@ -58,7 +62,12 @@ router.get("/:id", (req, res) => {
 router.put("/:id", (req, res) => {
   const onSuccess = alumno =>
     alumno
-      .update({ nombre: req.body.nombre, apellido: req.body.apellido, dni: req.body.dni, id_carrera: req.body.id_carrera, id_materia: req.body.id_materia }, { fields: ["nombre","apellido","dni","id_carrera","id_materia"] })
+      .update({ nombre: req.body.nombre,
+                apellido: req.body.apellido,
+                dni: req.body.dni,
+                id_carrera: req.body.id_carrera,
+                id_materia: req.body.id_materia },
+              { fields: ["nombre","apellido","dni","id_carrera","id_materia"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {
