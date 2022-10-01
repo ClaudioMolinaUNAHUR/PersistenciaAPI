@@ -17,14 +17,14 @@ dotenv.config();
 router.post("/", (req, res) => {
     // Validate User Here
     const user = req.body.user;
-    const pass = req.body.password;
+    const password = req.body.password;
     // Then generate JWT Token
   
     let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
     let data = {
-        time: Date(),
-        userId: 12,
+        user,
+        password,
     }
   
     const token = jwt.sign(data, jwtSecretKey);
