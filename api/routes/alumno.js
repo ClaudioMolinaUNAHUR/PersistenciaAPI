@@ -17,14 +17,9 @@ router.get("/", (req, res) => {
         as: 'Carrera-Relacionada',
         model: models.carrera,
         attributes: ["id", "nombre"]
-      },
-      {
-        as: 'Materia-Relacionada',
-        model: models.materia,
-        attributes: ["id", "nombre", "id_carrera"]
       }],
       ////////////////////////////////
-      
+
       order: [["id", "ASC"]],
       offset: (paginaActual-1) * cantidadAVer, 
       limit: cantidadAVer

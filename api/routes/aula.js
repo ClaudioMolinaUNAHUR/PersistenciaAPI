@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
       include:[{as:'Materia-Relacionada',
                 model:models.materia,
                 attributes: ["id","id_materia"]}],
-                ////////////////////////////////
+      ////////////////////////////////
                 order: [["id", "ASC"]],
                 offset: (paginaActual-1) * cantidadAVer, 
                 limit: cantidadAVer
