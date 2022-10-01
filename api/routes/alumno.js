@@ -4,12 +4,12 @@ var models = require("../models");
 
 router.get("/", (req, res) => {
 
-  const cantidadAVisualizar = parseInt(req.query.cantidadAVisualizar);
+  const cantidadAVer = parseInt(req.query.cantidadAVer);
   const paginaActual = parseInt(req.query.paginaActual);
 
   console.log("Esto es un mensaje para ver en consola");
   models.alumno
-    .findAndCountAll({
+    .findAll({
       attributes: ["id", "nombre", "apellido", "dni", "id_carrera", "id_materia"],
 
       /////////se agrega la asociacion 
@@ -23,10 +23,11 @@ router.get("/", (req, res) => {
         model: models.materia,
         attributes: ["id", "nombre", "id_carrera"]
       }],
-      order: [["id", "ASC"]],
-      offset: (paginaActual-1) * cantidadAVisualizar, 
-      limit: cantidadAVisualizar
       ////////////////////////////////
+      
+      order: [["id", "ASC"]],
+      offset: (paginaActual-1) * cantidadAVer, 
+      limit: cantidadAVer
 
     })
     .then(alumnos => res.send(alumnos))

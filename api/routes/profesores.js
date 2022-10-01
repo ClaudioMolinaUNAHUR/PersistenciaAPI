@@ -4,7 +4,7 @@ var models = require("../models");
 
 router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
-  const cantidadAVisualizar = parseInt(req.query.cantidadAVisualizar);
+  const cantidadAVer = parseInt(req.query.cantidadAVer);
   const paginaActual = parseInt(req.query.paginaActual);
 
   models.profesor
@@ -15,10 +15,10 @@ router.get("/", (req, res) => {
     include:[{as:'Materia-Relacionada',
             model:models.materia,
             attributes: ["id","nombre","id_carrera"]}],
+            ////////////////////////////////
             order: [["id", "ASC"]],
-            offset: (paginaActual-1) * cantidadAVisualizar, 
-            limit: cantidadAVisualizar
-    ////////////////////////////////
+            offset: (paginaActual-1) * cantidadAVer, 
+            limit: cantidadAVer
     })
     .then(profesores => res.send(profesores))
     .catch(() => res.sendStatus(500));
