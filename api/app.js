@@ -19,12 +19,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json()); // servidor entiende JSON
+app.use(express.urlencoded({ extended: false })); // servidor entiene formulario y los convierte a JS
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/login', login);
+app.use('/user', login);
 app.use('/car', carrerasRouter);
 app.use('/mat', materiasRouter);
 app.use('/alu', alumnoRouter);

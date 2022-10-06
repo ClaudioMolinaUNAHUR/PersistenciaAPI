@@ -1,21 +1,44 @@
 var express = require("express");
-const router = express.Router()
+const router = express.Router();
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
+const models = require('./models')
 
 
 dotenv.config();
-  
-// let PORT = process.env.PORT || 3001;
-
-// app.listen(PORT, () => {
-//   console.log(`Server is up and running on ${PORT} ...`);
-// });
 
 // Main Code Here  //
 // Generating JWT
-router.post("/", (req, res) => {
+router.post("/register", (req, res) => {
     // Validate User Here
+    const {username, email, password} = req.body
+    // Then generate JWT Token
+  
+    //let jwtSecretKey = process.env.JWT_SECRET_KEY;
+
+    models.user.create({
+        username: username,
+        email: email,
+        password: password
+    })
+    .then( (usuario) => {
+  
+    //const token = jwt.sign(data, jwtSecretKey);
+  
+    res.status(201).send({ id: usuario.id });
+    }).catch(error => {
+        if (error == "SequelizeUniqueConstraintError: Validation error") {
+          res.status(400).send('Bad request: existe otra user con el mismo nombre')
+        }
+        else {
+          console.log(`Error al intentar insertar en la base de datos: ${error}`)
+          res.sendStatus(500)
+        }
+      });
+});
+
+router.post("/login", (req, res) => {
+
     const user = req.body.user;
     const password = req.body.password;
     // Then generate JWT Token

@@ -23,4 +23,5 @@
      npx sequelize-cli model:generate --name alumno --attributes nombre:string,apellido:string,dni:integer,id_carrera:integer,id_materia:integer
      npx sequelize-cli model:generate --name profesor --attributes nombre:string,apellido:string,dni:integer,id_materia:integer
      npx sequelize-cli model:generate --name aulas --attributes id_materia:integer
+     npx sequelize-cli model:generate --name user --attributes username:string,email:string,password:string
 
