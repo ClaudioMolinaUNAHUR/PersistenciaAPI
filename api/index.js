@@ -2,31 +2,27 @@ var express = require("express");
 const router = express.Router();
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-const models = require('./models')
+const models = require('./models');
+//const user = require("./models/user");
 
 
 dotenv.config();
 
-// Main Code Here  //
-// Generating JWT
 router.post("/register", (req, res) => {
-    // Validate User Here
+    // recuperar json de body
     const {username, email, password} = req.body
-    // Then generate JWT Token
-  
-    //let jwtSecretKey = process.env.JWT_SECRET_KEY;
-
-    models.user.create({
-        username: username,
-        email: email,
-        password: password
+    //crea un user en la bd
+    const user = models.user.create({
+        username,
+        email,
+        password
     })
+    .then(() => {user.password = user.encriptPassword(user.password)}) // FALTA ARREGLAR
     .then( (usuario) => {
   
-    //const token = jwt.sign(data, jwtSecretKey);
-  
     res.status(201).send({ id: usuario.id });
-    }).catch(error => {
+
+    }).catch(error => { //porque tira error de datos duplicados
         if (error == "SequelizeUniqueConstraintError: Validation error") {
           res.status(400).send('Bad request: existe otra user con el mismo nombre')
         }
@@ -45,12 +41,13 @@ router.post("/login", (req, res) => {
   
     let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
-    let data = {
-        user,
-        password,
-    }
+    const encontrado = findUser(user, {
+        onSuccess,
+        onNotFound: () => res.sendStatus(404),
+        onError: () => res.sendStatus(500)
+      });
   
-    const token = jwt.sign(data, jwtSecretKey);
+    const token = jwt.sign(encontrado, jwtSecretKey);
   
     res.send(token);
 });
@@ -78,4 +75,16 @@ router.get("/validateToken", (req, res) => {
         return res.status(401).send(error);
     }
 });
+
+const findUser = (user, { onSuccess, onNotFound, onError }) => {
+    const id = user.id
+    models.alumno
+      .findOne({
+        attributes: ["username", "email", "password"],
+        where: { id }
+      })
+      .then(alumno => (alumno ? onSuccess(alumno) : onNotFound()))
+      .catch(() => onError());
+  };
+
 module.exports = router;

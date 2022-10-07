@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
 
   models.profesor
     .findAll({
-      attributes: ["id", "nombre","apellido","id_materia"],
+      attributes: ["id", "nombre","apellido","dni","id_materia"],
 
     /////////se agrega la asociacion 
     include:[{as:'Materia-Relacionada',
@@ -26,7 +26,7 @@ router.get("/", (req, res) => {
 
 router.post("/", (req, res) => {
   models.profesor
-    .create({ nombre: req.body.nombre, apellido: req.body.apellido, id_materia: req.body.id_materia})
+    .create({ nombre: req.body.nombre, apellido: req.body.apellido, dni: req.body.dni, id_materia: req.body.id_materia})
     .then(profesores => res.status(201).send({ id: profesores.id }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
@@ -42,7 +42,7 @@ router.post("/", (req, res) => {
 const findProfesor = (id, { onSuccess, onNotFound, onError }) => {
   models.profesor
     .findOne({
-      attributes: ["id", "nombre","apellido","id_materia"],
+      attributes: ["id", "nombre","apellido","dni","id_materia"],
       where: { id }
     })
     .then(profesor => (profesor ? onSuccess(profesor) : onNotFound()))
@@ -60,7 +60,8 @@ router.get("/:id", (req, res) => {
 router.put("/:id", (req, res) => {
   const onSuccess = profesor =>
     profesor
-      .update({ nombre: req.body.nombre, apellido: req.body.apellido, id_materia: req.body.id_materia}, { fields: ["nombre","apellido","id_materia"] })
+      .update({ nombre: req.body.nombre, apellido: req.body.apellido, dni: req.body.dni, id_materia: req.body.id_materia},
+        { fields: ["nombre","apellido","dni","id_materia"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {

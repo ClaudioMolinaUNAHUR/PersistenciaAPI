@@ -16,14 +16,14 @@ module.exports = (sequelize, DataTypes) => {
         as : 'Carrera-Relacionada',  // nombre de mi relacion
         foreignKey: 'id_carrera'     // campo con el que voy a igualar
       })
+
     }
   }
   alumno.init({
     nombre: DataTypes.STRING,
     apellido: DataTypes.STRING,
     dni: DataTypes.INTEGER,
-    id_carrera: DataTypes.INTEGER,
-    id_materia: DataTypes.INTEGER
+    id_carrera: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'alumno',

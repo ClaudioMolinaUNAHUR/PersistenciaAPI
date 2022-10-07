@@ -24,7 +24,7 @@ router.get("/", (req, res) => {
 });
 router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
-  models.carrera
+  models.aula
     .findAll({
       attributes: ["id", "nombre"]
     })
@@ -33,7 +33,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  models.aulas
+  models.aula
     .create({ id_materia: req.body.id_materia })
     .then(aula => res.status(201).send({ id: aula.id }))
     .catch(error => {
@@ -48,7 +48,7 @@ router.post("/", (req, res) => {
 });
 
 const findaula = (id, { onSuccess, onNotFound, onError }) => {
-  models.aulas
+  models.aula
     .findOne({
       attributes: ["id", "id_materia"],
       where: { id }
@@ -67,7 +67,7 @@ router.get("/:id", (req, res) => {
 
 router.put("/:id", (req, res) => {
   const onSuccess = aula =>
-    aulas
+    aula
       .update({ id_materia: req.body.id_materia }, { fields: ["id_materia"] })
       .then(() => res.sendStatus(200))
       .catch(error => {

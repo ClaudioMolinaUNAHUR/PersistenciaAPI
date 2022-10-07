@@ -2,7 +2,7 @@ const sequelize = require('sequelize')
 const Alumno = require('./models/alumno');
 const Aula = require('./models/aulas');
 const Carrera = require('./models/carrera');
-const Materia = require('./models/materia');
+const Materia = require('./models/materiaX');
 const Profesor = require('./models/profesor');
 
 const alumnos = [
@@ -68,11 +68,11 @@ const materias = [
 ];
 
 const aulas = [
-    {id: 1000},
-    {id: 1010},
-    {id: 1020},
-    {id: 1030},
-    {id: 1040}
+    {id_materia: 100},
+    {id_materia: 101},
+    {id_materia: 102},
+    {id_materia: 103},
+    {id_materia: 104}
 ];
 
 sequelize.sync({ force: false}).then( () => {
