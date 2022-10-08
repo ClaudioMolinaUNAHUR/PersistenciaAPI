@@ -3,6 +3,9 @@ const router = express.Router();
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const models = require('./models');
+const { cls } = require("sequelize");
+const verifyToken = require('./verifyToken');
+
 
 
 dotenv.config();
@@ -42,42 +45,55 @@ router.post("/register", (req, res) => {
 
 router.post("/login", (req, res) => {
 
-    const user = req.body.user;
-    const password = req.body.password;
+    const {email, password} = req.body
     // Then generate JWT Token
   
     let jwtSecretKey = process.env.JWT_SECRET_KEY;
 
-    const encontrado = findUser(user, {
-        onSuccess,
-        onNotFound: () => res.sendStatus(404),
-        onError: () => res.sendStatus(500)
-      });
-  
-    const token = jwt.sign(encontrado, jwtSecretKey);
-  
-    res.send(token);
-});
+    //encuentra usuario en BD
+    const user = models.user.findOne({
+      attributes: ["username", "email", "password"],
+      where: { email }
+
+    }).then( async (user)=>{
+      //valida el pass obtenido con el que esta en la BD
+      const passValidado = await user.validarPassword(password)
+
+      //si falla devuelve null, return necesario por estar dentro de un promise
+      if(!passValidado){
+        return res.status(401).json({auth: "Fallo", token: null})
+      }
+      
+      //devuelvo nuevo token para hacer querys
+      const token = jwt.sign({id:user.id}, jwtSecretKey,{
+        expiresIn: 60 * 60 * 24
+      })
+      res.json({auth: true, token: token});
+    })
+    .catch((error)=>{
+      res.status(401).send(error)
+    })
+})
 
 // Verification of JWT
-router.get("/validateToken", (req, res) => {
-    // Tokens are generally passed in header of request
-    // Due to security reasons.
-  
-    let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
-    let jwtSecretKey = process.env.JWT_SECRET_KEY;
-  
+router.get("/validateToken",verifyToken, (req, res, next) => {
     try {
-        const token = req.header(tokenHeaderKey);
-  
-        const decoded = jwt.verify(token, jwtSecretKey);
-        if(decoded){
-          findUser(decoded.id, {
-            onSuccess: user => res.send(user),
-            onNotFound: () => res.sendStatus(404),
-            onError: () => res.sendStatus(500)
-            })
-        }
+        // let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
+        // let jwtSecretKey = process.env.JWT_SECRET_KEY;    
+    
+        // const token = req.header(tokenHeaderKey);
+    
+        // if(!token){//validacion token null
+        //   return res.json({auth: false, messege: "No se ingreso Token"})
+        // } 
+        // const decoded = jwt.verify(token, jwtSecretKey);
+        
+        //verificacion asyncrona si el token existe y devuelve usuario con findUser
+        findUser(req.userId, {
+          onSuccess: user => res.send(user),
+          onNotFound: () => res.sendStatus(404),
+          onError: () => res.sendStatus(500)
+          })        
     } catch (error) {
         // Access Denied
         return res.status(401).send(error);
@@ -87,7 +103,7 @@ router.get("/validateToken", (req, res) => {
 const findUser = (id, { onSuccess, onNotFound, onError }) => {
     models.user
       .findOne({
-        attributes: ["username", "email", "password"],
+        attributes: ["username", "email"],
         where: { id }
       })
       .then(user => (user ? onSuccess(user) : onNotFound()))

@@ -7,8 +7,11 @@ module.exports = (sequelize, DataTypes) => {
   class user extends Model {
     encriptPassword = async (password) => {
       const salt = await bcrypt.genSalt(10);
-      return bcrypt.hash(password, salt)
+      return bcrypt.hash(password, salt);
    };
+    validarPassword = function(password){
+      return bcrypt.compare(password, this.password);
+    }
   }
   user.init({
     username: DataTypes.STRING,
