@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
      static associate(models) {
       // define association here
-      planesestudio.hasMany(models.carrera// modelo al que pertenece
+      this.hasMany(models.carrera// modelo al que pertenece
       ,{
         as : 'Carrera-Relacionado',  // nombre de mi relacion
         foreignKey: 'id_carrera'     // campo con el que voy a igualar
       });
-      planesestudio.hasMany(models.materia// modelo al que pertenece
+      this.hasMany(models.materia// modelo al que pertenece
       ,{
         as : 'Materia-Relacionado',  // nombre de mi relacion
         foreignKey: 'id_materia'     // campo con el que voy a igualar

@@ -3,7 +3,6 @@ const router = express.Router();
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const models = require('./models');
-//const user = require("./models/user");
 
 
 dotenv.config();
@@ -12,15 +11,23 @@ router.post("/register", (req, res) => {
     // recuperar json de body
     const {username, email, password} = req.body
     //crea un user en la bd
-    const user = models.user.create({
+    const usuario = models.user.create({
         username,
         email,
         password
     })
-    .then(() => {user.password = user.encriptPassword(user.password)}) // FALTA ARREGLAR
-    .then( (usuario) => {
-  
-    res.status(201).send({ id: usuario.id });
+    .then(async(user) => {
+      let jwtSecretKey = process.env.JWT_SECRET_KEY;
+      //encrypt PASSWORD
+      user.password = await user.encriptPassword(user.password)
+      await user.save()
+
+      //generar token del user.id pasando secretkey y con tiempo de expiracion 1 dia
+      const token = jwt.sign({id:user.id}, jwtSecretKey,{
+        expiresIn: 60 * 60 * 24
+      })
+
+      res.json({auth:true, token: token})
 
     }).catch(error => { //porque tira error de datos duplicados
         if (error == "SequelizeUniqueConstraintError: Validation error") {
@@ -63,12 +70,13 @@ router.get("/validateToken", (req, res) => {
     try {
         const token = req.header(tokenHeaderKey);
   
-        const verified = jwt.verify(token, jwtSecretKey);
-        if(verified){
-            return res.send("Successfully Verified");
-        }else{
-            // Access Denied
-            return res.status(401).send(error);
+        const decoded = jwt.verify(token, jwtSecretKey);
+        if(decoded){
+          findUser(decoded.id, {
+            onSuccess: user => res.send(user),
+            onNotFound: () => res.sendStatus(404),
+            onError: () => res.sendStatus(500)
+            })
         }
     } catch (error) {
         // Access Denied
@@ -76,14 +84,13 @@ router.get("/validateToken", (req, res) => {
     }
 });
 
-const findUser = (user, { onSuccess, onNotFound, onError }) => {
-    const id = user.id
-    models.alumno
+const findUser = (id, { onSuccess, onNotFound, onError }) => {
+    models.user
       .findOne({
         attributes: ["username", "email", "password"],
         where: { id }
       })
-      .then(alumno => (alumno ? onSuccess(alumno) : onNotFound()))
+      .then(user => (user ? onSuccess(user) : onNotFound()))
       .catch(() => onError());
   };
 

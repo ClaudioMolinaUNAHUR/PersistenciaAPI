@@ -4,7 +4,12 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class user extends Model {}
+  class user extends Model {
+    encriptPassword = async (password) => {
+      const salt = await bcrypt.genSalt(10);
+      return bcrypt.hash(password, salt)
+   };
+  }
   user.init({
     username: DataTypes.STRING,
     email: DataTypes.STRING,
@@ -13,9 +18,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'user',
   });
-  // user.prototype.encriptPassword = async (password) => {
-  //   const salt = await bcrypt.genSalt(10);
-  //   return bcrypt.hash(password, salt)
-  // };
+  
   return user;
 };

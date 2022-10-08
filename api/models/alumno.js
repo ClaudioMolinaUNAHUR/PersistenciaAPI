@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      alumno.belongsTo(models.carrera// modelo al que pertenece
+      this.belongsTo(models.carrera// modelo al que pertenece
       ,{
         as : 'Carrera-Relacionada',  // nombre de mi relacion
         foreignKey: 'id_carrera'     // campo con el que voy a igualar
