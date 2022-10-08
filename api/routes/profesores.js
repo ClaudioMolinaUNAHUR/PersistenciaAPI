@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
     /////////se agrega la asociacion 
     include:[{as:'Materia-Relacionada',
             model:models.materia,
-            attributes: ["id","nombre","id_carrera"]}],
+            attributes: ["id","nombre"]}],
             ////////////////////////////////
             order: [["id", "ASC"]],
             offset: (paginaActual-1) * cantidadAVer, 

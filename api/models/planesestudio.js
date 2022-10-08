@@ -14,12 +14,14 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.carrera// modelo al que pertenece
       ,{
         as : 'Carrera-Relacionado',  // nombre de mi relacion
-        foreignKey: 'id_carrera'     // campo con el que voy a igualar
+        foreignKey: 'id',     // campo con el que voy a igualar
+        targetKey: 'id_carrera' 
       });
       this.hasMany(models.materia// modelo al que pertenece
       ,{
         as : 'Materia-Relacionado',  // nombre de mi relacion
-        foreignKey: 'id_materia'     // campo con el que voy a igualar
+        foreignKey: 'id',     // campo con el que voy a igualar
+        targetKey: 'id_materia'
       });
     }
   }

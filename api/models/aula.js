@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.materia// modelo al que pertenece
+      ,{
+        as : 'Materia-Relacionado',  // nombre de mi relacion
+        foreignKey: 'id',  // foreignKey es el id destino "alumno"
+        targetKey: 'id_materia'  // foreignKey es el id origen "nota"
+      });
     }
   }
   aula.init({

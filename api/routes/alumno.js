@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
   models.alumno
     .findAll({
-      attributes: ["id", "nombre", "apellido", "dni", "id_carrera", "id_materia"],
+      attributes: ["id", "nombre", "apellido", "dni", "id_carrera"],
 
       /////////se agrega la asociacion 
       include: [{
@@ -35,8 +35,7 @@ router.post("/", (req, res) => {
       nombre: req.body.nombre,
       apellido: req.body.apellido,
       dni: req.body.dni,
-      id_carrera: req.body.id_carrera,
-      id_materia: req.body.id_materia
+      id_carrera: req.body.id_carrera
     })
     .then(alumno => res.status(201).send({ id: alumno.id }))
     .catch(error => {
@@ -53,7 +52,7 @@ router.post("/", (req, res) => {
 const findalumno = (id, { onSuccess, onNotFound, onError }) => {
   models.alumno
     .findOne({
-      attributes: ["id", "nombre", "apellido", "dni", "id_carrera", "id_materia"],
+      attributes: ["id", "nombre", "apellido", "dni", "id_carrera"],
       where: { id }
     })
     .then(alumno => (alumno ? onSuccess(alumno) : onNotFound()))
@@ -75,10 +74,9 @@ router.put("/:id", (req, res) => {
         nombre: req.body.nombre,
         apellido: req.body.apellido,
         dni: req.body.dni,
-        id_carrera: req.body.id_carrera,
-        id_materia: req.body.id_materia
+        id_carrera: req.body.id_carrera
       },
-        { fields: ["nombre", "apellido", "dni", "id_carrera", "id_materia"] })
+        { fields: ["nombre", "apellido", "dni", "id_carrera"] })
       .then(() => res.sendStatus(200))
       .catch(error => {
         if (error == "SequelizeUniqueConstraintError: Validation error") {
