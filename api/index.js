@@ -52,10 +52,10 @@ router.post("/login", (req, res) => {
 
     //encuentra usuario en BD
     const user = models.user.findOne({
-      attributes: ["username", "email", "password"],
-      where: { email }
-
-    }).then( async (user)=>{
+      attributes: ["id", "password"],
+      where: { email } 
+    })
+    .then( async (user)=>{
       //valida el pass obtenido con el que esta en la BD
       const passValidado = await user.validarPassword(password)
 
@@ -76,20 +76,9 @@ router.post("/login", (req, res) => {
 })
 
 // Verification of JWT
-router.get("/validateToken",verifyToken, (req, res, next) => {
+router.get("/validateToken", verifyToken , async (req, res) => {
     try {
-        // let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
-        // let jwtSecretKey = process.env.JWT_SECRET_KEY;    
-    
-        // const token = req.header(tokenHeaderKey);
-    
-        // if(!token){//validacion token null
-        //   return res.json({auth: false, messege: "No se ingreso Token"})
-        // } 
-        // const decoded = jwt.verify(token, jwtSecretKey);
-        
-        //verificacion asyncrona si el token existe y devuelve usuario con findUser
-        findUser(req.userId, {
+        await findUser(req.userId, {
           onSuccess: user => res.send(user),
           onNotFound: () => res.sendStatus(404),
           onError: () => res.sendStatus(500)
@@ -100,8 +89,8 @@ router.get("/validateToken",verifyToken, (req, res, next) => {
     }
 });
 
-const findUser = (id, { onSuccess, onNotFound, onError }) => {
-    models.user
+const findUser = async (id, { onSuccess, onNotFound, onError }) => {
+    await models.user
       .findOne({
         attributes: ["username", "email"],
         where: { id }
