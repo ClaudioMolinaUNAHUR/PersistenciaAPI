@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       ,{
         as : 'Materia-Relacionado',  // nombre de mi relacion
         foreignKey: 'id',  // foreignKey es el id destino "alumno"
-        targetKey: 'id_materia'  // foreignKey es el id origen "nota"
       });
     }
   }

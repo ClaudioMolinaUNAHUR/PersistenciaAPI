@@ -2,9 +2,9 @@ var express = require("express");
 const router = express.Router();
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-const models = require('./models');
+const models = require('../models');
 const { cls } = require("sequelize");
-const verifyToken = require('./verifyToken');
+const verifyToken = require('../middleware/verifyToken');
 
 
 

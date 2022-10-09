@@ -11,7 +11,7 @@ var profesorRouter = require('./routes/profesores');
 var aulaRouter = require('./routes/aula');
 var planRouter = require('./routes/planes');
 var notaRouter = require('./routes/nota');
-var login = require('./index');
+var login = require('./routes/login');
 
 
 var app = express();
