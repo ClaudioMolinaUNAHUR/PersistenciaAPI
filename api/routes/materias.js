@@ -92,5 +92,34 @@ router.delete("/:id", (req, res) => {
     onError: () => res.sendStatus(500)
   });
 });
+router.get("/masConcurridas", (req, res) => {
+  console.log("Esto es un mensaje para ver en consola");
+  const cantidadAVer = parseInt(req.query.cantidadAVer);
+  const paginaActual = parseInt(req.query.paginaActual);
+  const { count } = models.materia
+    .findAndCountAll({
+      attributes: ["id", "nombre"],
 
+      /////////se agrega la asociacion
+      include:[{as:'Alumno-Relacionada',
+                model:models.alumno,
+                attributes: ["id","nombre", "apellido", "dni", "id_carrera"]},
+                {as:'Planes-Relacionada',
+                model:models.planesestudio,
+                attributes: ["id_carrera","id_materia"]},
+                {as:'Carrera-Relacionada',
+                model:models.carrera,
+                attributes: ["id","nombre"]}
+              ],
+
+      ////////////////////////////////
+                
+      order: [["nombre"]],
+      offset: (paginaActual-1) * cantidadAVer, 
+      limit: cantidadAVer
+      
+    })
+    .then(materias => res.send(materias))
+    .catch(() => res.sendStatus(500));
+});
 module.exports = router;
