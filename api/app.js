@@ -13,6 +13,8 @@ var planRouter = require('./routes/planes');
 var notaRouter = require('./routes/nota');
 var login = require('./routes/login');
 
+var { cacheInit } = require('./middleware/cache');
+
 
 var app = express();
 
@@ -34,6 +36,20 @@ app.use('/pro', profesorRouter);
 app.use('/aul', aulaRouter);
 app.use('/plan', planRouter);
 app.use('/not', notaRouter);
+
+// cache en peticiones
+
+// la llamada inicial a esto tomará 2 segundos, pero cualquier llamada posterior
+// recibirá una respuesta instantánea del caché durante la próxima hora
+// este get puede ir como no ir
+app.get('/', cacheInit.withTtl('1 hour'), (req, res) => { // agregar ruta o ponerlo en routes
+  setTimeout(() => {
+    res.end('pong');
+  }, 2000);
+});
+
+// Guarda en caché todo lo que está debajo de esta línea durante 1 minuto (defaultTtl)
+app.use(cacheInit);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
