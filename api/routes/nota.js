@@ -62,20 +62,6 @@ const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-
-router.get("/", (req, res) => {
-  console.log("Esto es un mensaje para ver en consola");
-  models.nota
-    .findAll({
-      attributes: ["id", "nota", "id_alumno","id_profesor"]
-    })
-    .then(carreras => res.send(carreras))
-    .catch(() => res.sendStatus(500));
-});
-
-
-
-
 router.get("/:id", verifyToken, async(req, res) => {
   findCarrera(req.params.id, {
     onSuccess: nota => res.send(nota),

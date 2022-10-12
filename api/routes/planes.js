@@ -58,18 +58,6 @@ const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-
-router.get("/", (req, res) => {
-  console.log("Esto es un mensaje para ver en consola");
-  models.planesestudio
-    .findAll({
-      attributes: ["id_carrera", "id_materia"]
-    })
-    .then(carreras => res.send(carreras))
-    .catch(() => res.sendStatus(500));
-});
-
-
 router.get("/:id", verifyToken, async(req, res) => {
   findCarrera(req.params.id, {
     onSuccess: plan => res.send(plan),

@@ -50,18 +50,6 @@ const findProfesor = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/", (req, res) => {
-  console.log("Esto es un mensaje para ver en consola");
-  models.profesor
-    .findAll({
-      attributes: ["id", "nombre","apellido","dni","id_materia"]
-    })
-    .then(carreras => res.send(carreras))
-    .catch(() => res.sendStatus(500));
-});
-
-
-
 
 router.get("/:id",  verifyToken, async (req, res) => {
   findProfesor(req.params.id, {

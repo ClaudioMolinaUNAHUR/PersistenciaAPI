@@ -24,17 +24,6 @@ router.get("/", verifyToken, async (req, res) => {
     .catch(() => res.sendStatus(500));
 });
 
-router.get("/", (req, res) => {
-  console.log("Esto es un mensaje para ver en consola");
-  models.aula
-    .findAll({
-      attributes: ["id", "id_materia"]
-    })
-    .then(carreras => res.send(carreras))
-    .catch(() => res.sendStatus(500));
-});
-
-
 router.post("/",verifyToken, async  (req, res) => {
   models.aula
     .create({ id_materia: req.body.id_materia })

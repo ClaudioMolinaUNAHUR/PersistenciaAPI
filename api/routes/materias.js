@@ -53,15 +53,6 @@ const findMateria = (id, { onSuccess, onNotFound, onError }) => {
     .then(materias => (materias ? onSuccess(materias) : onNotFound()))
     .catch(() => onError());
 };
-router.get("/", (req, res) => {
-  console.log("Esto es un mensaje para ver en consola");
-  models.materia
-    .findAll({
-      attributes: ["id", "nombre"]
-    })
-    .then(carreras => res.send(carreras))
-    .catch(() => res.sendStatus(500));
-});
 
 
 router.get("/:id",verifyToken, async  (req, res) => {
