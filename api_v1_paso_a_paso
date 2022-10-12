@@ -12,7 +12,8 @@
      npx sequelize init
      DEBUG=api:* npm start
 
-
+     // cache de peticiones 
+     npm install express-expeditious --save
 
      npx sequelize-cli model:generate --name carrera --attributes nombre:string
      npx sequelize db:migrate
