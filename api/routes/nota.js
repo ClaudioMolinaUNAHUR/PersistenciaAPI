@@ -1,8 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+var verifyToken = require('../middleware/verifyToken');
 
-router.get("/", (req, res) => {
+router.get("/",verifyToken, async (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
   const cantidadAVer = parseInt(req.query.cantidadAVer);
   const paginaActual = parseInt(req.query.paginaActual);
@@ -34,7 +35,7 @@ router.get("/", (req, res) => {
     .catch(() => res.sendStatus(500));
 });
 
-router.post("/", (req, res) => {
+router.post("/",verifyToken, async (req, res) => {
   models.nota
     .create({ nota: req.body.nota,
               id_alumno: req.body.id_alumno,
@@ -61,7 +62,21 @@ const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/:id", (req, res) => {
+
+router.get("/", (req, res) => {
+  console.log("Esto es un mensaje para ver en consola");
+  models.nota
+    .findAll({
+      attributes: ["id", "nota", "id_alumno","id_profesor"]
+    })
+    .then(carreras => res.send(carreras))
+    .catch(() => res.sendStatus(500));
+});
+
+
+
+
+router.get("/:id", verifyToken, async(req, res) => {
   findCarrera(req.params.id, {
     onSuccess: nota => res.send(nota),
     onNotFound: () => res.sendStatus(404),
@@ -69,7 +84,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, async(req, res) => {
   const onSuccess = nota =>
     nota
       .update({ nota: req.body.nota,
@@ -92,7 +107,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id",verifyToken, async (req, res) => {
   const onSuccess = nota =>
   nota
       .destroy()

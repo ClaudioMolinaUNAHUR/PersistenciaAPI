@@ -1,8 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+var verifyToken = require('../middleware/verifyToken');
 
-router.get("/", (req, res) => {
+router.get("/",verifyToken, async (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
   const cantidadAVer = parseInt(req.query.cantidadAVer);
   const paginaActual = parseInt(req.query.paginaActual);
@@ -32,7 +33,7 @@ router.get("/", (req, res) => {
     .catch(() => res.sendStatus(500));
 });
 
-router.post("/", (req, res) => {
+router.post("/", verifyToken, async(req, res) => {
   models.planesestudio
     .create({ id_carrera: req.body.id_carrera, id_materia: req.body.id_materia })
     .then(plan => res.status(201).send({ id: plan.id }))
@@ -57,7 +58,19 @@ const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/:id", (req, res) => {
+
+router.get("/", (req, res) => {
+  console.log("Esto es un mensaje para ver en consola");
+  models.planesestudio
+    .findAll({
+      attributes: ["id_carrera", "id_materia"]
+    })
+    .then(carreras => res.send(carreras))
+    .catch(() => res.sendStatus(500));
+});
+
+
+router.get("/:id", verifyToken, async(req, res) => {
   findCarrera(req.params.id, {
     onSuccess: plan => res.send(plan),
     onNotFound: () => res.sendStatus(404),
@@ -65,7 +78,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id",verifyToken, async (req, res) => {
   const onSuccess = carrera =>
     carrera
       .update({ id_materia: req.body.id_materia, id_carrera: req.body.id_carrera }, { fields: ["id_carrera", "id_materia"] })
@@ -86,7 +99,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, async(req, res) => {
   const onSuccess = plan =>
   plan
       .destroy()

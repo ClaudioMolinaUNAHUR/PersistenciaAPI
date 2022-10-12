@@ -1,11 +1,12 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+var verifyToken = require('../middleware/verifyToken');
 
-router.get("/", (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
   const cantidadAVer = parseInt(req.query.cantidadAVer);
-  const paginaActual = parseInt(req.query.paginaActual);
+  const paginaActual = parseInt(req.query.paginaActual); 
   models.aulas
     .findAll({
       attributes: ["id", "id_materia"],
@@ -22,17 +23,19 @@ router.get("/", (req, res) => {
     .then(aulas => res.send(aulas))
     .catch(() => res.sendStatus(500));
 });
+
 router.get("/", (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
   models.aula
     .findAll({
-      attributes: ["id", "nombre"]
+      attributes: ["id", "id_materia"]
     })
     .then(carreras => res.send(carreras))
     .catch(() => res.sendStatus(500));
 });
 
-router.post("/", (req, res) => {
+
+router.post("/",verifyToken, async  (req, res) => {
   models.aula
     .create({ id_materia: req.body.id_materia })
     .then(aula => res.status(201).send({ id: aula.id }))
@@ -57,7 +60,7 @@ const findaula = (id, { onSuccess, onNotFound, onError }) => {
     .catch(() => onError());
 };
 
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, async(req, res) => {
   findaula(req.params.id, {
     onSuccess: aula => res.send(aula),
     onNotFound: () => res.sendStatus(404),
@@ -65,7 +68,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id",verifyToken, async (req, res) => {
   const onSuccess = aula =>
     aula
       .update({ id_materia: req.body.id_materia }, { fields: ["id_materia"] })
@@ -86,7 +89,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, async(req, res) => {
   const onSuccess = aula =>
     aula
       .destroy()

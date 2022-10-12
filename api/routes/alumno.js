@@ -1,14 +1,15 @@
 var express = require("express");
 var router = express.Router();
 var models = require("../models");
+var verifyToken = require('../middleware/verifyToken');
 
-router.get("/", (req, res) => {
-
-  const cantidadAVer = parseInt(req.query.cantidadAVer);
+router.get("/", verifyToken, async (req, res) => {
+// Dentro de la query
+  const cantidadAVer = parseInt(req.query.cantidadAVer) ;
   const paginaActual = parseInt(req.query.paginaActual);
 
   console.log("Esto es un mensaje para ver en consola");
-  models.alumno
+  await models.alumno
     .findAll({
       attributes: ["id", "nombre", "apellido", "dni", "id_carrera"],
 
@@ -22,14 +23,14 @@ router.get("/", (req, res) => {
 
       order: [["id", "ASC"]],
       offset: (paginaActual-1) * cantidadAVer, 
-      limit: cantidadAVer
-
+      limit: cantidadAVer,
+      
     })
-    .then(alumnos => res.send(alumnos))
+    .then(alumnos => res.send(alumnos)) //muestra alumno
     .catch(() => res.sendStatus(500));
 });
 
-router.post("/", (req, res) => {
+router.post("/", verifyToken, async(req, res) => {
   models.alumno
     .create({
       nombre: req.body.nombre,
@@ -58,8 +59,17 @@ const findalumno = (id, { onSuccess, onNotFound, onError }) => {
     .then(alumno => (alumno ? onSuccess(alumno) : onNotFound()))
     .catch(() => onError());
 };
+router.get("/", (req, res) => {
+  console.log("Esto es un mensaje para ver en consola");
+  models.alumno
+    .findAll({
+      attributes: ["id", "nombre", "apellido", "dni", "id_carrera"]
+    })
+    .then(carreras => res.send(carreras))
+    .catch(() => res.sendStatus(500));
+});
 
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, async(req, res) => {
   findalumno(req.params.id, {
     onSuccess: alumno => res.send(alumno),
     onNotFound: () => res.sendStatus(404),
@@ -67,7 +77,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id",verifyToken, async (req, res) => {
   const onSuccess = alumno =>
     alumno
       .update({
@@ -94,7 +104,7 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id",verifyToken, async (req, res) => {
   const onSuccess = alumno =>
     alumno
       .destroy()
