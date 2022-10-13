@@ -13,15 +13,16 @@ dotenv.config();
 router.post("/register", (req, res) => {
     // recuperar json de body
     const {username, email, password} = req.body
-    //crea un user en la bd
-    const usuario = models.user.create({
+    //crea un user en la bd, se crea un obj
+    const usuario = models.user.create({ //usuario traido de la tabla, crea un usuario del modelo usuario
         username,
         email,
         password
     })
+    //espera el usaurio
     .then(async(user) => {
       let jwtSecretKey = process.env.JWT_SECRET_KEY;
-      //encrypt PASSWORD
+      //encrypt PASSWORD, hashea pass
       user.password = await user.encriptPassword(user.password)
       await user.save()
 

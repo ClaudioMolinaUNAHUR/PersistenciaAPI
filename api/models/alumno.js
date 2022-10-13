@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       })
 
     }
-  }
+  } //inicializa modelo, para guardar en sequelze 
   alumno.init({
     nombre: DataTypes.STRING,
     apellido: DataTypes.STRING,
@@ -28,5 +28,5 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'alumno',
   });
-  return alumno;
+  return alumno;  //exporta modelo
 };
