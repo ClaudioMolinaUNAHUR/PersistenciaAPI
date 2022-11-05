@@ -10,7 +10,17 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      
+      this.hasOne(models.aula// modelo al que pertenece
+      ,{
+        as : 'Materia-Relacionada',  // nombre de mi relacion
+        foreignKey: 'id_materia'     // campo con el que voy a igualar
+      })
+      this.belongsTo(models.planesestudio// modelo al que pertenece
+      ,{
+        as : 'Materia_delPlan',  // nombre de mi relacion
+        foreignKey: 'id_materia'     // campo con el que voy a igualar
+      })
     }
   }
   materia.init({

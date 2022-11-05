@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.materia// modelo al que pertenece
       ,{
         as : 'Materia-Relacionado',  // nombre de mi relacion
-        foreignKey: 'id',  // foreignKey es el id destino "alumno"
+        foreignKey: 'id_materia',  // foreignKey es el id destino "alumno"
       });
     }
   }

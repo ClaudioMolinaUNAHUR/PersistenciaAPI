@@ -4,5 +4,6 @@ module.exports = (sequelize, DataTypes) => {
     nombre: DataTypes.STRING
   }, {});
   
+  
   return carrera;
 };

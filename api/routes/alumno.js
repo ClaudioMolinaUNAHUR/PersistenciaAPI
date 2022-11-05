@@ -11,13 +11,13 @@ router.get("/",verifyToken, async (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
   models.alumno
     .findAll({
-      attributes: ["id", "nombre", "apellido", "dni", "id_carrera"],
+      attributes: [ "dni", "nombre", "apellido", "id_carrera"],
 
       /////////se agrega la asociacion 
       include: [{
         as: 'Carrera-Relacionada',
         model: models.carrera,
-        attributes: ["id", "nombre"]
+        attributes: ["nombre"]
       }],
       ////////////////////////////////
 
@@ -38,7 +38,7 @@ router.post("/", verifyToken, async(req, res) => {
       dni: req.body.dni,
       id_carrera: req.body.id_carrera
     })
-    .then(alumno => res.status(201).send({ id: alumno.id }))
+    .then(alumno => res.status(201).send({ id: alumno.dni }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
         res.status(400).send('Bad request: existe otra alumno con el mismo nombre')
@@ -50,25 +50,25 @@ router.post("/", verifyToken, async(req, res) => {
     });
 });
 
-const findalumno = (id, { onSuccess, onNotFound, onError }) => {
+const findalumno = (dni, { onSuccess, onNotFound, onError }) => {
   models.alumno
     .findOne({
-      attributes: ["id", "nombre", "apellido", "dni", "id_carrera"],
-      where: { id }
+      attributes: ["dni", "nombre", "apellido", "id_carrera"],
+      where: { dni }
     })
     .then(alumno => (alumno ? onSuccess(alumno) : onNotFound()))
     .catch(() => onError());
 };
 
-router.get("/:id", verifyToken, async(req, res) => {
-  findalumno(req.params.id, {
+router.get("/:dni", verifyToken, async(req, res) => {
+  findalumno(req.params.dni, {
     onSuccess: alumno => res.send(alumno),
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
   });
 });
 
-router.put("/:id",verifyToken, async (req, res) => {
+router.put("/:dni",verifyToken, async (req, res) => {
   const onSuccess = alumno =>
     alumno
       .update({
@@ -88,20 +88,20 @@ router.put("/:id",verifyToken, async (req, res) => {
           res.sendStatus(500)
         }
       });
-  findalumno(req.params.id, {
+  findalumno(req.params.dni, {
     onSuccess,
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
   });
 });
 
-router.delete("/:id",verifyToken, async (req, res) => {
+router.delete("/:dni",verifyToken, async (req, res) => {
   const onSuccess = alumno =>
     alumno
       .destroy()
       .then(() => res.sendStatus(200))
       .catch(() => res.sendStatus(500));
-  findalumno(req.params.id, {
+  findalumno(req.params.dni, {
     onSuccess,
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)

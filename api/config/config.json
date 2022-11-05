@@ -1,10 +1,10 @@
 {
   "development": {
     "username": "root",
-    "password": "admin123",
+    "password": "",
     "database": "api_v1",
     "host": "localhost",
-    "dialect": "mysql",
+    "dialect": "mariadb",
     "operatorsAliases": 0
   }
 }
