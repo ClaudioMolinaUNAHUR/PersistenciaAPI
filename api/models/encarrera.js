@@ -3,35 +3,34 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class nota extends Model {
+  class enCarrera extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models)  {
+     static associate(models) {
       // define association here
       this.belongsTo(models.alumno// modelo al que pertenece
       ,{
         as : 'Alumno-Relacionado',  // nombre de mi relacion
-        foreignKey: 'dni_alumno',  // foreignKey es el id destino "alumno"
-        // targetKey: 'id_alumno'  // foreignKey es el id origen "nota"
+        foreignKey: 'dni_alumno',     // campo con el que voy a igualar
+        // targetKey: 'id_carrera' 
       });
-      this.belongsTo(models.materia// modelo al que pertenece
+      this.belongsTo(models.carrera// modelo al que pertenece
       ,{
-        as : 'Materia-Relacionada',  // nombre de mi relacion
-        foreignKey: 'id_materia',  // campo con el que voy a igualar
-        // targetKey: 'id_profesor'  
+        as : 'Carrera-Relacionado',  // nombre de mi relacion
+        foreignKey: 'id_carrera',     // campo con el que voy a igualar
+        // targetKey: 'id_materia'
       });
     }
   }
-  nota.init({
-    nota: DataTypes.INTEGER,
+  enCarrera.init({
     dni_alumno: DataTypes.INTEGER,
-    id_materia: DataTypes.INTEGER
+    id_carrera: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'nota',
+    modelName: 'enCarrera',
   });
-  return nota;
+  return enCarrera;
 };

@@ -21,13 +21,15 @@
      npx sequelize-cli model:generate --name materia --attributes nombre:string,id_carrera:integer
      set DEBUG=api:* | npm start
 
-     npx sequelize-cli model:generate --name alumno --attributes nombre:string,apellido:string,dni:integer,id_carrera:integer
+     npx sequelize-cli model:generate --name alumno --attributes nombre:string,apellido:string,dni:integer,activo:boolean,id_perfil:integer
      npx sequelize-cli model:generate --name profesor --attributes nombre:string,apellido:string,dni:integer,id_materia:integer
      npx sequelize-cli model:generate --name aula --attributes id_materia:integer
-     npx sequelize-cli model:generate --name nota --attributes nota:integer,id_alumno:integer,id_profesor:integer
-     npx sequelize-cli model:generate --name materia --attributes nombre:string
-     npx sequelize-cli model:generate --name planesestudio --attributes id_carrera:integer,id_materia:integer
+     npx sequelize-cli model:generate --name nota --attributes nota:integer,dni_alumno:integer,id_materia:integer
+     npx sequelize-cli model:generate --name materia --attributes nombre:string,duracion:date
+     npx sequelize-cli model:generate --name planesestudio --attributes fecha_inicio:date,fecha_fin:date,id_carrera:integer,id_materia:integer
 
 
-     npx sequelize-cli model:generate --name user --attributes username:string,email:string,password:string
+     npx sequelize-cli model:generate --name user --attributes username:string,email:string,password:string,dni_alumno:integer
+     npx sequelize-cli model:generate --name perfil --attributes id_perfil:integer,secundario:string,colegio:string
+     npx sequelize-cli model:generate --name enCarrera --attributes dni_alumno:integer,id_carrera:integer
 

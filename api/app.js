@@ -9,8 +9,6 @@ var materiasRouter = require('./routes/materias');
 var alumnoRouter = require('./routes/alumno');
 var profesorRouter = require('./routes/profesores');
 var aulaRouter = require('./routes/aula');
-var planRouter = require('./routes/planes');
-var notaRouter = require('./routes/nota');
 var login = require('./routes/login');
 
 var { cacheInit } = require('./middleware/cache');
@@ -34,8 +32,6 @@ app.use('/mat', materiasRouter);
 app.use('/alu', alumnoRouter);
 app.use('/pro', profesorRouter);
 app.use('/aul', aulaRouter);
-app.use('/plan', planRouter);
-app.use('/not', notaRouter);
 
 // cache en peticiones
 

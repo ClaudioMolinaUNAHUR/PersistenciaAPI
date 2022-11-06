@@ -11,10 +11,25 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.carrera// modelo al que pertenece
+      this.hasMany(models.enCarrera// modelo al que pertenece
       ,{
-        as : 'Carrera-Relacionada',  // nombre de mi relacion
-        foreignKey: 'id_carrera'     // campo con el que voy a igualar
+        as : 'Alumno-conCarrera',  // nombre de mi relacion
+        foreignKey: 'dni_alumno'     // campo con el que voy a igualar
+      })
+      this.hasMany(models.nota// modelo al que pertenece
+      ,{
+        as : 'Alumno-conNota',  // nombre de mi relacion
+        foreignKey: 'dni_alumno'     // campo con el que voy a igualar
+      })
+      this.hasOne(models.user// modelo al que pertenece
+      ,{
+        as : 'Usuario-Relacionado',  // nombre de mi relacion
+        foreignKey: 'dni_alumno'     // campo con el que voy a igualar
+      })
+      this.belongsTo(models.perfil// modelo al que pertenece
+      ,{
+        as : 'Perfil-Relacionado',  // nombre de mi relacion
+        foreignKey: 'id_perfil'     // campo con el que voy a igualar
       })
 
     }
@@ -23,10 +38,11 @@ module.exports = (sequelize, DataTypes) => {
     nombre: DataTypes.STRING,
     apellido: DataTypes.STRING,
     dni: DataTypes.INTEGER,
-    id_carrera: DataTypes.INTEGER
+    activo: DataTypes.BOOLEAN,
+    id_perfil: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'alumno',
   });
-  return alumno;  //exporta modelo
+  return alumno;
 };

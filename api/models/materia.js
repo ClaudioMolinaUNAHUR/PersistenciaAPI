@@ -16,15 +16,26 @@ module.exports = (sequelize, DataTypes) => {
         as : 'Materia-Relacionada',  // nombre de mi relacion
         foreignKey: 'id_materia'     // campo con el que voy a igualar
       })
-      this.belongsTo(models.planesestudio// modelo al que pertenece
+      this.hasMany(models.planesestudio// modelo al que pertenece
       ,{
         as : 'Materia_delPlan',  // nombre de mi relacion
+        foreignKey: 'id_materia'     // campo con el que voy a igualar
+      })
+      this.hasOne(models.profesor// modelo al que pertenece
+      ,{
+        as : 'Profesor-deMateria',  // nombre de mi relacion
+        foreignKey: 'id_materia'     // campo con el que voy a igualar
+      })
+      this.hasMany(models.nota// modelo al que pertenece
+      ,{
+        as : 'Nota-de-Materia',  // nombre de mi relacion
         foreignKey: 'id_materia'     // campo con el que voy a igualar
       })
     }
   }
   materia.init({
-    nombre: DataTypes.STRING
+    nombre: DataTypes.STRING,
+    duracion: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'materia',

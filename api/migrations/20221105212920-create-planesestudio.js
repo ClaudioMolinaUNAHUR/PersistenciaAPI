@@ -2,15 +2,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('materia', {
+    await queryInterface.createTable('planesestudios', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      nombre: {
-        type: Sequelize.STRING
+      fecha_inicio: {
+        type: Sequelize.DATE
+      },
+      fecha_fin: {
+        type: Sequelize.DATE
+      },
+      id_carrera: {
+        type: Sequelize.INTEGER
+      },
+      id_materia: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -23,6 +32,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('materia');
+    await queryInterface.dropTable('planesestudios');
   }
 };

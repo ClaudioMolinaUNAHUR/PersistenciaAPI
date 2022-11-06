@@ -11,13 +11,13 @@ router.get("/",verifyToken, async (req, res) => {
   console.log("Esto es un mensaje para ver en consola");
   models.alumno
     .findAll({
-      attributes: [ "dni", "nombre", "apellido", "id_carrera"],
+      attributes: [ "dni", "nombre", "apellido"],
 
       /////////se agrega la asociacion 
       include: [{
-        as: 'Carrera-Relacionada',
-        model: models.carrera,
-        attributes: ["nombre"]
+        as: 'Perfil-Relacionado',
+        model: models.perfil,
+        attributes: ["secundario", "colegio"]
       }],
       ////////////////////////////////
 
@@ -31,12 +31,13 @@ router.get("/",verifyToken, async (req, res) => {
 });
 
 router.post("/", verifyToken, async(req, res) => {
+  req.body.id_perfil //TAREAS LLENAR PERFIL Y CARRERA
   models.alumno
     .create({
       nombre: req.body.nombre,
       apellido: req.body.apellido,
       dni: req.body.dni,
-      id_carrera: req.body.id_carrera
+      id_perfil: req.body.id_perfil
     })
     .then(alumno => res.status(201).send({ id: alumno.dni }))
     .catch(error => {

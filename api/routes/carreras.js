@@ -20,16 +20,19 @@ router.get("/", verifyToken, async  (req, res) => {
     .catch(() => res.sendStatus(500));
 });
 
-router.get("/", (req, res) => {
-  console.log("Esto es un mensaje para ver en consola");
-  models.carrera
-    .findAll({
-      attributes: ["id", "nombre"]
-    })
-    .then(carreras => res.send(carreras))
-    .catch(() => res.sendStatus(500));
+router.get("/:id", verifyToken, async(req, res) => {
+    const onSuccess = carrera =>
+      findPlan(carrera.id, {
+          onSuccess: planCarrera => res.send(planCarrera),
+          onNotFound: () => res.sendStatus(404),
+          onError: () => res.sendStatus(500)
+          })
+    findCarrera(req.params.id, {
+      onSuccess,
+      onNotFound: () => res.sendStatus(404),
+      onError: () => res.sendStatus(500)
+    });
 });
-
 
 router.post("/", verifyToken, async (req, res) => {
   models.carrera
@@ -53,6 +56,24 @@ const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
       where: { id }
     })
     .then(carrera => (carrera ? onSuccess(carrera) : onNotFound()))
+    .catch(() => onError());
+};
+
+const findPlan = (id, { onSuccess, onNotFound, onError }) => {
+  models.planesestudio
+    .findOne({
+      attributes: [['id', 'Plan-N']],
+      /////////se agrega la asociacion
+      include:[{as:'Carrera-Relacionado',
+                model:models.carrera,
+                attributes: ["id","nombre"]},
+                {as:'Materia-Relacionado',
+                model:models.materia,
+                attributes: ["id","nombre","duracion"]}
+              ],
+      where: { id }
+    })
+    .then(plan => (plan ? onSuccess(plan) : onNotFound()))
     .catch(() => onError());
 };
 
