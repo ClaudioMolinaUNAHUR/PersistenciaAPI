@@ -56,12 +56,36 @@ const findMateria = (id, { onSuccess, onNotFound, onError }) => {
 
 
 router.get("/:id",verifyToken, async  (req, res) => {
+  const onSuccess = materia =>
+      findPlan(materia.id, {
+          onSuccess: planCarrera => res.send(planCarrera),
+          onNotFound: () => res.sendStatus(404),
+          onError: () => res.sendStatus(500)
+          })
   findMateria(req.params.id, {
-    onSuccess: materias => res.send(materias),
+    onSuccess,
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
   });
 });
+
+const findPlan = (id_materia, { onSuccess, onNotFound, onError }) => {
+  models.planesestudio
+    .findAll({
+      attributes: [['id_materia','Materia']],
+      /////////se agrega la asociacion
+      include:[{as:'Materia-Relacionado',
+                model:models.materia,
+                attributes: ["nombre","duracion"]},
+                {as:'Carrera-Relacionado',
+                model:models.carrera,
+                attributes: ["id","nombre"]}],
+
+      where:  {id_materia}
+    })
+    .then(plan => (plan ? onSuccess(plan) : onNotFound()))
+    .catch(() => onError());
+};
 
 router.put("/:id",verifyToken, async  (req, res) => {
   const onSuccess = carrera =>
