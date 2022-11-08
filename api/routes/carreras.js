@@ -108,6 +108,7 @@ const findPlan = (id_carrera, { onSuccess, onNotFound, onError }) => {
     .then(plan=> (plan ? onSuccess(plan): onNotFound()))
     .catch(() => onError());
 };
+
 const sumarDuracion = (id_carrera, { onSuccess, onNotFound, onError }) => {
   models.planesestudio
     .findAll({
@@ -142,6 +143,43 @@ router.put("/:id", verifyToken, async  (req, res) => {
     onNotFound: () => res.sendStatus(404),
     onError: () => res.sendStatus(500)
   });
+});
+router.post("/act_fechas/", verifyToken, async  (req, res) => {
+  models.planesestudio
+      .findAll({
+        attributes: ["id","fecha_inicio","fecha_fin"],
+        /////////se agrega la asociacion
+        include:[{as:'Materia-Relacionado',
+                  model:models.materia,
+                  attributes: ["duracion"]}],
+        where:{}
+      })
+      .then((datos)=>{
+          datos.forEach(dato => {dato.fecha_inicio = (req.body.fecha_inicio); dato.fecha_fin=(req.body.fecha_inicio)})
+          datos.forEach(dato =>             
+            dato.fecha_fin = new Date(dato.fecha_fin).setMonth(
+                                    (new Date(dato.fecha_inicio)).getMonth() + dato["Materia-Relacionado"].duracion ))
+          return datos
+      })
+      .then((datos)=>{
+         datos.forEach( async(dato) => {
+          let id = dato.id
+          await models.planesestudio.update({
+            fecha_inicio: dato.fecha_inicio,
+            fecha_fin: dato.fecha_fin
+          },{ where: {id} })
+        })
+      })
+      .then(() => res.send(200))
+      .catch(error => {
+        if (error == "SequelizeUniqueConstraintError: Validation error") {
+          res.status(400).send('Bad request: existe otra carrera con el mismo nombre')
+        }
+        else {
+          console.log(`Error al intentar actualizar la base de datos: ${error}`)
+          res.sendStatus(500)
+        }
+      })
 });
 
 router.delete("/:id",verifyToken, async  (req, res) => {
