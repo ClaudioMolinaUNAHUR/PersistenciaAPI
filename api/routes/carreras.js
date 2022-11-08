@@ -99,7 +99,7 @@ const findPlan = (id_carrera, { onSuccess, onNotFound, onError }) => {
       include:[{as:'Carrera-Relacionado',
                 model:models.carrera,
                 attributes: ["nombre"]},
-                {as:'MateriaRelacionado',
+                {as:'Materia-Relacionado',
                 model:models.materia,
                 attributes: ["id","nombre","duracion"]}
               ],
