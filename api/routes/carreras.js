@@ -119,7 +119,7 @@ const sumarDuracion = (id_carrera, { onSuccess, onNotFound, onError }) => {
                 attributes: ["duracion"]}],
       where:  {id_carrera}
     })
-    .then(plan=> (plan ? onSuccess(plan): onNotFound()))
+    .then(plan=> (plan ? onSuccess({total_meses: plan[0].get("total")}) : onNotFound()))
     .catch(() => onError());
 };
 
