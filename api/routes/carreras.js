@@ -67,7 +67,7 @@ router.post("/add/:id", verifyToken, async (req, res) => {
   const id_materia = await req.body.id_materia
   models.planesestudio
     .create({ id_carrera: req.params.id, id_materia })
-    .then(carrera => res.status(201).send({ id: carrera.id }))
+    .then(carrera => res.status(201).send("Se Agrego Materia"))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
         res.status(400).send('Bad request: existe otra carrera con el mismo nombre')
