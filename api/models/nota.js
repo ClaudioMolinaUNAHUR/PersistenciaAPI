@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(models.alumno// modelo al que pertenece
       ,{
-        as : 'Alumno-Relacionado',  // nombre de mi relacion
+        as : 'Alumnos-Relacionado',  // nombre de mi relacion
         foreignKey: 'dni_alumno',  // foreignKey es el id destino "alumno"
         // targetKey: 'id_alumno'  // foreignKey es el id origen "nota"
       });

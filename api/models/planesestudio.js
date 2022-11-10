@@ -13,13 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(models.carrera// modelo al que pertenece
       ,{
-        as : 'Carrera-Relacionado',  // nombre de mi relacion
+        as : 'Carrera-Relacionada',  // nombre de mi relacion
         foreignKey: 'id_carrera',     // campo con el que voy a igualar
         // targetKey: 'id_carrera' 
       });
       this.belongsTo(models.materia// modelo al que pertenece
       ,{
-        as : 'Materia-Relacionado',  // nombre de mi relacion
+        as : 'Materia-Relacionada',  // nombre de mi relacion
         foreignKey: 'id_materia',     // campo con el que voy a igualar
         // targetKey: 'id_materia'
       });

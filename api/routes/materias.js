@@ -9,18 +9,10 @@ router.get("/", verifyToken, async  (req, res) => {
   const paginaActual = parseInt(req.query.paginaActual);
   models.materia
     .findAll({
-      attributes: ["id", "nombre"],
-
-      // /////////se agrega la asociacion
-      // include:[{as:'Carrera-Relacionada',
-      //           model:models.carrera,
-      //           attributes: ["id","nombre"]}],
-
-      //           ////////////////////////////////
-                
-                order: [["id", "ASC"]],
-                offset: (paginaActual-1) * cantidadAVer, 
-                limit: cantidadAVer
+        attributes: ["id", "nombre"],
+        order: [["id", "ASC"]],
+        offset: (paginaActual-1) * cantidadAVer, 
+        limit: cantidadAVer
       
     })
     .then(materias => res.send(materias))
@@ -33,6 +25,23 @@ router.post("/", verifyToken, async (req, res) => {
   models.materia
     .create({ nombre: req.body.nombre  })
     .then(materias => res.status(201).send({ id: materias.id }))
+    .catch(error => {
+      if (error == "SequelizeUniqueConstraintError: Validation error") {
+        res.status(400).send('Bad request: existe otra carrera con el mismo nombre')
+      }
+      else {
+        console.log(`Error al intentar insertar en la base de datos: ${error}`)
+        res.sendStatus(500)
+      }
+    });
+});
+
+router.post("/addNota/:id", verifyToken, async (req, res) => {
+  const dni_alumno = await req.body.dni_alumno
+  const nota = await req.body.nota
+  models.nota
+    .create({ id_materia: req.params.id, dni_alumno, nota})
+    .then(() => res.status(201).send("nota agregada"))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
         res.status(400).send('Bad request: existe otra carrera con el mismo nombre')
@@ -74,10 +83,10 @@ const findPlan = (id_materia, { onSuccess, onNotFound, onError }) => {
     .findAll({
       attributes: [['id_materia','Materia']],
       /////////se agrega la asociacion
-      include:[{as:'Materia-Relacionado',
+      include:[{as:'Materia-Relacionada',
                 model:models.materia,
                 attributes: ["nombre","duracion"]},
-                {as:'Carrera-Relacionado',
+                {as:'Carrera-Relacionada',
                 model:models.carrera,
                 attributes: ["id","nombre"]}],
 

@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(models.materia// modelo al que pertenece
       ,{
-        as : 'Materia-Relacionado',  // nombre de mi relacion
+        as : 'Materia-Relacionada',  // nombre de mi relacion
         foreignKey: 'id_materia',  // foreignKey es el id destino "alumno"
       });
     }

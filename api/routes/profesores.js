@@ -10,7 +10,7 @@ router.get("/",verifyToken, async (req, res) => {
 
   models.profesor
     .findAll({
-      attributes: ["id", "nombre","apellido","dni","id_materia"],
+      attributes: ["id", "nombre","apellido","dni"],
 
     /////////se agrega la asociacion 
     include:[{as:'Materia-Relacionada',

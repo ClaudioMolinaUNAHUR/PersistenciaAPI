@@ -39,7 +39,7 @@ router.post("/", verifyToken, async(req, res) => {
       dni: req.body.dni,
       id_perfil: req.body.id_perfil
     })
-    .then(alumno => res.status(201).send({ id: alumno.dni }))
+    .then(alumno => res.status(201).send({ dni: alumno.dni }))
     .catch(error => {
       if (error == "SequelizeUniqueConstraintError: Validation error") {
         res.status(400).send('Bad request: existe otra alumno con el mismo nombre')
@@ -54,7 +54,7 @@ router.post("/", verifyToken, async(req, res) => {
 const findalumno = (dni, { onSuccess, onNotFound, onError }) => {
   models.alumno
     .findOne({
-      attributes: ["dni", "nombre", "apellido", "id_carrera"],
+      attributes: ["dni", "nombre", "apellido", "id_perfil"],
       where: { dni }
     })
     .then(alumno => (alumno ? onSuccess(alumno) : onNotFound()))
@@ -68,7 +68,34 @@ router.get("/:dni", verifyToken, async(req, res) => {
     onError: () => res.sendStatus(500)
   });
 });
+router.get("/notas/:dni", verifyToken, async(req, res) => {
+  const onSuccess = alumno => 
+    obtenerNotas(alumno.dni, {
+        onSuccess: planCarrera => res.send(planCarrera),
+        onNotFound: () => res.sendStatus(404),
+        onError: () => res.sendStatus(500)
+        })
+  findalumno(req.params.dni, {
+    onSuccess,
+    onNotFound: () => res.sendStatus(404),
+    onError: () => res.sendStatus(500)
+  });
+});
 
+const obtenerNotas = (dni_alumno, { onSuccess, onNotFound, onError }) => {
+  models.nota
+    .findAll({
+      attributes: ["nota"],
+      /////////se agrega la asociacion
+      include:[ {as:'Materia-Relacionada',
+                model:models.materia,
+                attributes: ["id","nombre"]}
+              ],
+      where:  {dni_alumno}
+    })
+    .then(not=> (not ? onSuccess(not): onNotFound()))
+    .catch(() => onError());
+};
 router.put("/:dni",verifyToken, async (req, res) => {
   const onSuccess = alumno =>
     alumno
