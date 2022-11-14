@@ -20,6 +20,8 @@ router.get("/", verifyToken, async  (req, res) => {
     .then(carreras => res.send(carreras))
     .catch(() => res.sendStatus(500));
 });
+
+//ALUMNOS EN ESTE ID CARRERA
 router.get("/alumnos/:id", verifyToken, async(req, res) => {    
   const onSuccess = carrera =>
     findEnCarrera(carrera.id, {
@@ -34,6 +36,21 @@ router.get("/alumnos/:id", verifyToken, async(req, res) => {
   });
 });
 
+const findEnCarrera = (id_carrera, { onSuccess, onNotFound, onError }) => {
+  models.enCarrera
+    .findAll({
+      attributes: [['id_carrera','Carrera'], "dni_alumno"],
+      /////////se agrega la asociacion
+      include:[{as:'Carrera-Relacionada',
+                model:models.carrera,
+                attributes: ["nombre"]}
+              ],
+      where:  {id_carrera}
+    })
+    .then(datos=> (datos ? onSuccess(datos): onNotFound()))
+    .catch(() => onError());
+};
+
 router.get("/:id", verifyToken, async(req, res) => {    
     const onSuccess = carrera =>
       findPlan(carrera.id, {
@@ -47,6 +64,26 @@ router.get("/:id", verifyToken, async(req, res) => {
       onError: () => res.sendStatus(500)
     });
 });
+
+const findPlan = (id_carrera, { onSuccess, onNotFound, onError }) => {
+  models.planesestudio
+    .findAll({
+      attributes: [['id_carrera','Carrera']],
+      /////////se agrega la asociacion
+      include:[{as:'Carrera-Relacionada',
+                model:models.carrera,
+                attributes: ["nombre"]},
+                {as:'Materia-Relacionada',
+                model:models.materia,
+                attributes: ["id","nombre","duracion"]}
+              ],
+      where:  {id_carrera}
+    })
+    .then(plan=> (plan ? onSuccess(plan): onNotFound()))
+    .catch(() => onError());
+};
+
+//duracion de una carrera
 router.get("/duracionTotal/:id", verifyToken, async(req, res) => {    
   const onSuccess = carrera =>
     sumarDuracion(carrera.id, {
@@ -60,6 +97,20 @@ router.get("/duracionTotal/:id", verifyToken, async(req, res) => {
     onError: () => res.sendStatus(500)
   });
 });
+
+const sumarDuracion = (id_carrera, { onSuccess, onNotFound, onError }) => {
+  models.planesestudio
+    .findAll({
+      attributes: [[sequelize.fn('sum', sequelize.col('duracion')), 'total']], // SUM('duracion') AS 'total'
+      /////////se agrega la asociacion
+      include:[{as:'Materia-Relacionada',
+                model:models.materia,
+                attributes: ["duracion"]}],
+      where:  {id_carrera}
+    })
+    .then(plan=> (plan ? onSuccess({total_meses: plan[0].get("total")}) : onNotFound()))
+    .catch(() => onError());
+};
 
 router.post("/", verifyToken, async (req, res) => {
   models.carrera
@@ -130,7 +181,6 @@ router.post("/act_fechas/", verifyToken, async  (req, res) => {
       })
 });
 
-
 const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
   models.carrera
     .findOne({
@@ -140,53 +190,6 @@ const findCarrera = (id, { onSuccess, onNotFound, onError }) => {
     .then(carrera => (carrera ? onSuccess(carrera) : onNotFound()))
     .catch(() => onError());
 };
-
-const findPlan = (id_carrera, { onSuccess, onNotFound, onError }) => {
-  models.planesestudio
-    .findAll({
-      attributes: [['id_carrera','Carrera']],
-      /////////se agrega la asociacion
-      include:[{as:'Carrera-Relacionada',
-                model:models.carrera,
-                attributes: ["nombre"]},
-                {as:'Materia-Relacionada',
-                model:models.materia,
-                attributes: ["id","nombre","duracion"]}
-              ],
-      where:  {id_carrera}
-    })
-    .then(plan=> (plan ? onSuccess(plan): onNotFound()))
-    .catch(() => onError());
-};
-const findEnCarrera = (id_carrera, { onSuccess, onNotFound, onError }) => {
-  models.enCarrera
-    .findAll({
-      attributes: [['id_carrera','Carrera'], "dni_alumno"],
-      /////////se agrega la asociacion
-      include:[{as:'Carrera-Relacionada',
-                model:models.carrera,
-                attributes: ["nombre"]}
-              ],
-      where:  {id_carrera}
-    })
-    .then(datos=> (datos ? onSuccess(datos): onNotFound()))
-    .catch(() => onError());
-};
-
-const sumarDuracion = (id_carrera, { onSuccess, onNotFound, onError }) => {
-  models.planesestudio
-    .findAll({
-      attributes: [[sequelize.fn('sum', sequelize.col('duracion')), 'total']],
-      /////////se agrega la asociacion
-      include:[{as:'Materia-Relacionada',
-                model:models.materia,
-                attributes: ["duracion"]}],
-      where:  {id_carrera}
-    })
-    .then(plan=> (plan ? onSuccess({total_meses: plan[0].get("total")}) : onNotFound()))
-    .catch(() => onError());
-};
-
 
 router.put("/:id", verifyToken, async  (req, res) => {
   const onSuccess = carrera =>
@@ -208,7 +211,6 @@ router.put("/:id", verifyToken, async  (req, res) => {
     onError: () => res.sendStatus(500)
   });
 });
-
 
 router.delete("/:id",verifyToken, async  (req, res) => {
   const onSuccess = carrera =>

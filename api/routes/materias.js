@@ -19,8 +19,6 @@ router.get("/", verifyToken, async  (req, res) => {
     .catch(() => res.sendStatus(500));
 });
 
-
-
 router.post("/", verifyToken, async (req, res) => {
   models.materia
     .create({ nombre: req.body.nombre  })
@@ -53,17 +51,6 @@ router.post("/addNota/:id", verifyToken, async (req, res) => {
     });
 });
 
-const findMateria = (id, { onSuccess, onNotFound, onError }) => {
-  models.materia
-    .findOne({
-      attributes: ["id", "nombre"],
-      where: { id }
-    })
-    .then(materias => (materias ? onSuccess(materias) : onNotFound()))
-    .catch(() => onError());
-};
-
-
 router.get("/:id",verifyToken, async  (req, res) => {
   const onSuccess = materia =>
       findPlan(materia.id, {
@@ -93,6 +80,16 @@ const findPlan = (id_materia, { onSuccess, onNotFound, onError }) => {
       where:  {id_materia}
     })
     .then(plan => (plan ? onSuccess(plan) : onNotFound()))
+    .catch(() => onError());
+};
+
+const findMateria = (id, { onSuccess, onNotFound, onError }) => {
+  models.materia
+    .findOne({
+      attributes: ["id", "nombre"],
+      where: { id }
+    })
+    .then(materias => (materias ? onSuccess(materias) : onNotFound()))
     .catch(() => onError());
 };
 

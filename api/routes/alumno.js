@@ -51,16 +51,6 @@ router.post("/", verifyToken, async(req, res) => {
     });
 });
 
-const findalumno = (dni, { onSuccess, onNotFound, onError }) => {
-  models.alumno
-    .findOne({
-      attributes: ["dni", "nombre", "apellido", "id_perfil"],
-      where: { dni }
-    })
-    .then(alumno => (alumno ? onSuccess(alumno) : onNotFound()))
-    .catch(() => onError());
-};
-
 router.get("/:dni", verifyToken, async(req, res) => {
   findalumno(req.params.dni, {
     onSuccess: alumno => res.send(alumno),
@@ -68,6 +58,7 @@ router.get("/:dni", verifyToken, async(req, res) => {
     onError: () => res.sendStatus(500)
   });
 });
+
 router.get("/notas/:dni", verifyToken, async(req, res) => {
   const onSuccess = alumno => 
     obtenerNotas(alumno.dni, {
@@ -96,6 +87,17 @@ const obtenerNotas = (dni_alumno, { onSuccess, onNotFound, onError }) => {
     .then(not=> (not ? onSuccess(not): onNotFound()))
     .catch(() => onError());
 };
+
+const findalumno = (dni, { onSuccess, onNotFound, onError }) => {
+  models.alumno
+    .findOne({
+      attributes: ["dni", "nombre", "apellido", "id_perfil"],
+      where: { dni }
+    })
+    .then(alumno => (alumno ? onSuccess(alumno) : onNotFound()))
+    .catch(() => onError());
+};
+
 router.put("/:dni",verifyToken, async (req, res) => {
   const onSuccess = alumno =>
     alumno

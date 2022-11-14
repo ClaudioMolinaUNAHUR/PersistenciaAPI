@@ -40,6 +40,14 @@ router.post("/", verifyToken, async (req, res) => {
     });
 });
 
+router.get("/:id",  verifyToken, async (req, res) => {
+  findProfesor(req.params.id, {
+    onSuccess: profesor => res.send(profesor),
+    onNotFound: () => res.sendStatus(404),
+    onError: () => res.sendStatus(500)
+  });
+});
+
 const findProfesor = (id, { onSuccess, onNotFound, onError }) => {
   models.profesor
     .findOne({
@@ -49,15 +57,6 @@ const findProfesor = (id, { onSuccess, onNotFound, onError }) => {
     .then(profesor => (profesor ? onSuccess(profesor) : onNotFound()))
     .catch(() => onError());
 };
-
-
-router.get("/:id",  verifyToken, async (req, res) => {
-  findProfesor(req.params.id, {
-    onSuccess: profesor => res.send(profesor),
-    onNotFound: () => res.sendStatus(404),
-    onError: () => res.sendStatus(500)
-  });
-});
 
 router.put("/:id", verifyToken, async  (req, res) => {
   const onSuccess = profesor =>
