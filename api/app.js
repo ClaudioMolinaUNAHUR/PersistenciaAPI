@@ -45,6 +45,7 @@ app.get('/', cacheInit.withTtl('1 hour'), (req, res) => { // agregar ruta o pone
 });
 
 // Guarda en caché todo lo que está debajo de esta línea durante 1 minuto (defaultTtl)
+//y lo ultiliza como middle cada vez q realizas peticiones
 app.use(cacheInit);
 
 // catch 404 and forward to error handler
